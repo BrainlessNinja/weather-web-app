@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="card">
+    <div class="search">
+        <input type="text" placeholder="Enter city name" spellcheck="false">
+        <button><img src="icons/search.png" alt="search"></button>
+    </div>
+    <div class="weather-main">
+        <img src="https://openweathermap.org/img/wn/10d@4x.png" alt="" class="main-icon">
+        <h1 class="temp">
+            98°C
+        </h1>
+        <h2 class="city">Almaty</h2>
+        <div class="daily">
+            <div class="weather">
+                <img src="" alt="" class="weather1-icon">
+                <p class="weather1-name">weather1</p>
+                <p class="weather1-temp"></p>
+                <p class="weather1-time"></p>
+
+            </div>
+            <div class="weather">
+                <img src="" alt="" class="weather2-icon">
+                <p class="weather2-name">weather2</p>
+                <p class="weather2-temp"></p>
+                <p class="weather2-time"></p>
+            </div>
+            <div class="weather">
+                <img src="" alt="" class="weather3-icon">
+                <p class="weather3-name">weather3</p>
+                <p class="weather3-temp"></p>
+                <p class="weather3-time"></p>
+            </div>
+            <div class="weather">
+                <img src="" alt="" class="weather4-icon">
+                <p class="weather4-name">weather4</p>
+                <p class="weather4-temp"></p>
+                <p class="weather4-time"></p>
+            </div>
+        </div>
+        <div class="details">
+            <div class="col">
+                <img src="icons/wind.png" alt="wind">
+                <div class="details-content">
+                    <p class="wind">Wind Speed</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+            <div class="col">
+                <img src="icons/rain.png" alt="rain">
+                <div class="details-content">
+                    <p class="humidity">humidity</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="week">
+    <h1>Week Forecast</h1>
+    <div class="week-forecast">
+        <div class="day">
+            <p class="d1">Monday</p>
+            <p class="week-temp1">12°C/18°C</p>
+        </div>
+        <div class="day">
+            <p class="d2">Tuesday</p>
+            <p class="week-temp2">33°C/45°C</p>
+        </div>
+        <div class="day">
+            <p class="d3">Wednesday</p>
+            <p class="week-temp3">27°C/57°C</p>
+        </div>
+        <div class="day">
+            <p class="d4">Thursday</p>
+            <p class="week-temp4">85°C/100°C</p>
+        </div>
+        <div class="day">
+            <p class="d5">Friday</p>
+            <p class="week-temp5">20°C/82°C</p>
+        </div>
+        <div class="day">
+            <p class="d6">Saturday</p>
+            <p class="week-temp6">11°C/25°C</p>
+        </div>
+        <div class="day">
+            <p class="d7">Sunday</p>
+            <p class="week-temp7">41°C/65°C</p>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    const apiKey = "&appid=196c19074a83385a6d57600041f38a10";
+    //var city = "Almaty";
+    const daily = "https://api.openweathermap.org/data/2.5/forecast?&units=metric&cnt=4"+ apiKey;
+    const current = "https://api.openweathermap.org/data/2.5/weather?&units=metric"+ apiKey;
+    const week = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto"
+    const searchBox = document.querySelector(".search input");
+    const searchBtn = document.querySelector(".search button");
+
+    function timeConverter(time){
+        const dateObject = new Date (time*1000);
+        return(dateObject.getHours() + ":00");
+    }
+    function getWeekDay(data){
+        const dateObject = new Date (data);
+        const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        return(dayNames[dateObject.getDay()]);
+    }
+
+    window.onload = checkWeather("Almaty");
+
+    async function checkWeather(city){
+        const responcecurrent = await fetch(current  + "&q=" + city );
+        const responceforecast = await fetch(daily  + "&q=" + city );
+
+        var data = await responcecurrent.json();
+        var data2 = await responceforecast.json();
+
+        const responceweek = await fetch("https://api.open-meteo.com/v1/forecast?&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto" + "&latitude=" + data.coord.lat + "&longitude=" + data.coord.lon);
+        var dataWeek = await responceweek.json();
+
+
+        //console.log(data);
+        //console.log(data2);
+        console.log(dataWeek);
+        const { icon } = data.weather[0];
+        //console.log(icon);
+        iconurl = 'https://openweathermap.org/img/wn/' + icon + '@4x.png'
+        //console.log(data2.list[0].weather[0].id);
+
+        document.querySelector(".city").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+        document.querySelector(".main-icon").src = iconurl;
+        document.querySelector(".wind").innerHTML = data.wind.speed + " m/s"
+        document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+        document.querySelector(".weather1-icon").src = 'https://openweathermap.org/img/wn/' + data2.list[0].weather[0].icon + ".png";
+        document.querySelector(".weather1-name").innerHTML = data2.list[0].weather[0].main;
+        document.querySelector(".weather1-time").innerHTML = timeConverter(data2.list[0].dt);
+        document.querySelector(".weather1-temp").innerHTML = Math.round(data2.list[0].main.temp) + "°C";
+        document.querySelector(".weather2-icon").src = 'https://openweathermap.org/img/wn/' + data2.list[1].weather[0].icon + ".png";
+        document.querySelector(".weather2-name").innerHTML = data2.list[1].weather[0].main;
+        document.querySelector(".weather2-time").innerHTML = timeConverter(data2.list[1].dt);
+        document.querySelector(".weather2-temp").innerHTML = Math.round(data2.list[1].main.temp) + "°C";
+        document.querySelector(".weather3-icon").src = 'https://openweathermap.org/img/wn/' + data2.list[2].weather[0].icon + ".png";
+        document.querySelector(".weather3-name").innerHTML = data2.list[2].weather[0].main;
+        document.querySelector(".weather3-time").innerHTML = timeConverter(data2.list[2].dt);
+        document.querySelector(".weather3-temp").innerHTML = Math.round(data2.list[2].main.temp) + "°C";
+        document.querySelector(".weather4-icon").src = 'https://openweathermap.org/img/wn/' + data2.list[3].weather[0].icon + ".png";
+        document.querySelector(".weather4-name").innerHTML = data2.list[3].weather[0].main;
+        document.querySelector(".weather4-time").innerHTML = timeConverter(data2.list[3].dt);
+        document.querySelector(".weather4-temp").innerHTML = Math.round(data2.list[3].main.temp) + "°C";
+
+        document.querySelector(".week-temp1").innerHTML = (dataWeek.daily.temperature_2m_min[0] + "°C<br>" + dataWeek.daily.temperature_2m_max[0] + "°C");
+        document.querySelector(".week-temp2").innerHTML = (dataWeek.daily.temperature_2m_min[1] + "°C<br>" + dataWeek.daily.temperature_2m_max[1] + "°C");
+        document.querySelector(".week-temp3").innerHTML = (dataWeek.daily.temperature_2m_min[2] + "°C<br>" + dataWeek.daily.temperature_2m_max[2] + "°C");
+        document.querySelector(".week-temp4").innerHTML = (dataWeek.daily.temperature_2m_min[3] + "°C<br>" + dataWeek.daily.temperature_2m_max[3] + "°C");
+        document.querySelector(".week-temp5").innerHTML = (dataWeek.daily.temperature_2m_min[4] + "°C<br>" + dataWeek.daily.temperature_2m_max[4] + "°C");
+        document.querySelector(".week-temp6").innerHTML = (dataWeek.daily.temperature_2m_min[5] + "°C<br>" + dataWeek.daily.temperature_2m_max[5] + "°C");
+        document.querySelector(".week-temp7").innerHTML = (dataWeek.daily.temperature_2m_min[6] + "°C<br>" + dataWeek.daily.temperature_2m_max[6] + "°C");
+
+        document.querySelector(".d1").innerHTML = getWeekDay(dataWeek.daily.time[0]);
+        document.querySelector(".d2").innerHTML = getWeekDay(dataWeek.daily.time[1]);
+        document.querySelector(".d3").innerHTML = getWeekDay(dataWeek.daily.time[2]);
+        document.querySelector(".d4").innerHTML = getWeekDay(dataWeek.daily.time[3]);
+        document.querySelector(".d5").innerHTML = getWeekDay(dataWeek.daily.time[4]);
+        document.querySelector(".d6").innerHTML = getWeekDay(dataWeek.daily.time[5]);
+        document.querySelector(".d7").innerHTML = getWeekDay(dataWeek.daily.time[6]);
+
+        
+
+    }
+
+    searchBtn.addEventListener("click", ()=>{
+        checkWeather(searchBox.value);
+    })
+</script>
+
+
+
+</body>
+</html>
