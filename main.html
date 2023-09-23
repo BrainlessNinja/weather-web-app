@@ -100,11 +100,11 @@
 
 
 <script>
-    const apiKey = "&appid=196c19074a83385a6d57600041f38a10";
+    const apiKey = "YOUR OPENWEATHER API";
     //var city = "Almaty";
-    const daily = "https://api.openweathermap.org/data/2.5/forecast?&units=metric&cnt=4"+ apiKey;
-    const current = "https://api.openweathermap.org/data/2.5/weather?&units=metric"+ apiKey;
-    const week = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto"
+    const daily = "https://api.openweathermap.org/data/2.5/forecast?&units=metric&cnt=4"+ "&appid=" + apiKey;
+    const current = "https://api.openweathermap.org/data/2.5/weather?&units=metric"+ "&appid=" +  apiKey;
+    //const week = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto"
     const searchBox = document.querySelector(".search input");
     const searchBtn = document.querySelector(".search button");
 
